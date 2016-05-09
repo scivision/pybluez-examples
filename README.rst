@@ -111,17 +111,18 @@ bt_audio_service_open: connect() failed: Connection refused (111)::
 
     sudo nano /etc/bluetooth/audio.conf
 
-paste in
-``
-[general]
-Enable=Sink,Source,Socket
-Disable=Media
+paste in::
 
-AutoConnect=true
-SCORouting=PCM
-``
+    [general]
+    Enable=Sink,Source,Socket
+    Disable=Media
+
+    AutoConnect=true
+    SCORouting=PCM
+
 
 then::
+
      sudo service bluetooth restart
 
 Picking the Bluetooth speaker as default audio device
