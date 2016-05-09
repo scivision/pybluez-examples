@@ -152,6 +152,8 @@ and you can use::
 References
 ==========
 
+https://bitbucket.org/OscarAcena/pygattlib
+
 https://wiki.archlinux.org/index.php/bluetooth_keyboard
 
 https://github.com/oz123/dude/blob/master/bin/speakersswitcher.sh
