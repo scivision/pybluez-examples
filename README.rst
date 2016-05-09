@@ -2,7 +2,7 @@
 pybluez-examples
 ================
 Example Bluetooth tasks using the Python PyBluez module.
-Tested on Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter & Bluez 4.99-2
+Tested on Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter & Bluez 5.23
 
 .. contents::
 
@@ -16,27 +16,26 @@ Prereqs
     sudo adduser lp $(whoami)
     sudo reboot
 
+Scanning for bluetooth devices from Python 
+==========================================
+using pybluez::
+
+    python blueztools.py
 
 one-time pairing
 ================
-::
+optional commands commented out, with Bluez 5, we use the bluetoothctl agent::
 
     #sudo hciconfig hci0 up   #enables bt on computer--only if needed
+    #hcitool scan  # gets UUID of devices in pairing mode
+    #hcitool dev # get BT adapter uuid
 
-    hcitool scan  # gets speaker uuid
-
-    #hcitool dev # get bt usb uuid
-
-    #bluetooth-agent 0000 <device uuid>
-
-    bluez-simple-agent hci0 <device uuid>  #it will respond with "New device  <speaker uuid>
-
-Note if you were trying to pair a keyboard, you'd type the same digits say 0000
-on your laptop AND the keyboard you're trying to pair, then hit enter on the bluetooth 
-keyboard and your laptop
-
-
-
+    bluetoothctl -a  #starts interactive prompt
+    scan on          #scans for UUID of device (BT and BLE) in pairing mode
+    pair uuid        # where "uuid" is what you found with scan 
+    trust uuid
+    connect uuid    # after pairing, this is how you connect in the future
+    
 Notes
 =====
 If you get the message "Creating device failed: org.bluez.Error.AuthenticationRejected: Authentication Rejected", then:: 
@@ -96,7 +95,7 @@ to connect
 (note, in ubuntu it disconnects after a second, maybe because system
 bluetooth menu is overriding with "off"::
 
-    sudo hcitool cc <speaker uuid>
+    sudo hcitool cc <uuid>
 
 
 Errors
@@ -147,6 +146,9 @@ and you can use::
 
 References
 ==========
+
+https://wiki.archlinux.org/index.php/bluetooth_keyboard
+
 https://github.com/oz123/dude/blob/master/bin/speakersswitcher.sh
 
 http://blog.scphillips.com/2013/01/sound-configuration-on-raspberry-pi-with-alsa/
