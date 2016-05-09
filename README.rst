@@ -55,40 +55,41 @@ If connected but lacking sound try::
 
     nano ~/.asoundrc
 
-paste in:   (thanks https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=570468)
-``
-pcm.btspkr {
-   type plug
-   slave {
-       pcm {
-           type bluetooth
-           device "AA:BB:CC:DD:EE:FF"
-           profile "auto"
+paste in::   
+
+    pcm.btspkr {
+       type plug
+       slave {
+           pcm {
+               type bluetooth
+               device "AA:BB:CC:DD:EE:FF"
+               profile "auto"
+           }   
        }   
-   }   
-   hint {
-       show on
-       description "BT Speaker"
-   }   
-}
-ctl.btspkr {
-  type bluetooth
-}  
+       hint {
+           show on
+           description "BT Speaker"
+       }   
+    }
+    ctl.btspkr {
+      type bluetooth
+    }  
 
-pcm.btspkr_softvol
-{
-   type softvol
-   slave.pcm "btspkr"
-   control.name "Bluetooth"
-   control.card 0
-}
+    pcm.btspkr_softvol
+    {
+       type softvol
+       slave.pcm "btspkr"
+       control.name "Bluetooth"
+       control.card 0
+    }
 
-# Using bluetooth as default : 
-pcm.!default {
-    type plug
-    slave.pcm "btspkr_softvol"
-}
-``
+    # Using bluetooth as default : 
+    pcm.!default {
+        type plug
+        slave.pcm "btspkr_softvol"
+    }
+
+(thanks https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=570468)
 
 to connect (note, in ubuntu it disconnects after a second, maybe because system
 bluetooth menu is overriding with "off"
