@@ -2,7 +2,7 @@
 pybluez-examples
 ================
 Example Bluetooth tasks using the Python PyBluez module.
-Tested on Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter & Bluez 5.23
+Tested on Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter & Bluez 5
 
 .. contents::
 
@@ -10,8 +10,9 @@ Prereqs
 =======
 ::
 
-    sudo apt-get install libbluetooth-dev bluez  bluez-hcidump
-    pip install pybluez
+    sudo apt-get install libbluetooth-dev bluez bluez-hcidump  libboost-python-dev libglib2.0-dev
+
+    pip install pybluez gattlib
 
     sudo adduser lp $(whoami)
     sudo reboot
@@ -22,11 +23,15 @@ using pybluez::
 
     python blueztools.py
 
+If you get OSError: No such device  you may not be finding your bluetooth adapter. Try enabling it via::
+
+    sudo hciconfig hci0 up
+
 one-time pairing
 ================
 optional commands commented out, with Bluez 5, we use the bluetoothctl agent::
 
-    #sudo hciconfig hci0 up   #enables bt on computer--only if needed
+    #sudo hciconfig hci0 up   #enables bt on computer
     #hcitool scan  # gets UUID of devices in pairing mode
     #hcitool dev # get BT adapter uuid
 
