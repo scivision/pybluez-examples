@@ -91,11 +91,13 @@ paste in::
 
 (thanks https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=570468)
 
-to connect (note, in ubuntu it disconnects after a second, maybe because system
-bluetooth menu is overriding with "off"
-```
-sudo hcitool cc <speaker uuid>
-```
+to connect 
+==========
+(note, in ubuntu it disconnects after a second, maybe because system
+bluetooth menu is overriding with "off"::
+
+    sudo hcitool cc <speaker uuid>
+
 
 Errors
 =======
