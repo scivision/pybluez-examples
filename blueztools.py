@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 demo of basic Bluetooth device scanning/discovery
 Michael Hirsch
@@ -16,11 +16,11 @@ def bluetooth_classic_scan(timeout=10):
     """
     devs = bt.discover_devices(duration=scansec, flush_cache=True, lookup_names=True )
 
-    print('found {} Bluetooth (non-BLE) devices in pairing mode:'.format(len(devs)))
+    print('found',len(devs),'Bluetooth (non-BLE) devices in pairing mode:')
 
     if devs:
         for u,n in devs.items():
-            print('{}   {}'.format(u,n))
+            print(u,n)
 
     return devs
 
@@ -29,11 +29,11 @@ def bluetooth_low_energy_scan(timeout=10):
     svc = DiscoveryService()
     devs = svc.discover(timeout)
 
-    print('found {} Bluetooth Low Energy (Smart) devices:'.format(len(devs)))
+    print('found',len(devs),'Bluetooth Low Energy (Smart) devices:')
 
     if devs:
         for u,n in devs.items():
-            print('{}   {}'.format(u,n))
+            print(u,n)
 
     return devs
 
