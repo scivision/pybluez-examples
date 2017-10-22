@@ -10,7 +10,7 @@ Prereqs
 =======
 ::
 
-    sudo apt-get install libbluetooth-dev bluez bluez-hcidump  libboost-python-dev libboost-thread-dev libglib2.0-dev
+    apt install libbluetooth-dev bluez bluez-hcidump  libboost-python-dev libboost-thread-dev libglib2.0-dev
 
     pip install pybluez gattlib
 
