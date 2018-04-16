@@ -1,65 +1,112 @@
 ================
 pybluez-examples
 ================
-Example Bluetooth tasks using the Python PyBluez module.
-Tested on Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter & Bluez 5
+Example Bluetooth tasks using the Python
+`PyBluez <https://pybluez.github.io/>`_
+module.
+Tested using BlueZ 5 with Python 2.7 and:
+
+* Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter 
+* Raspberry Pi 3 (on-board Bluetooth)
+* laptop with Ubuntu 18.04 / 16.04
 
 .. contents::
 
 Prereqs
 =======
+Note that we use system Python 2.7 for ease of library install (even on Ubuntu 18.04).  
+If you have Anaconda/Miniconda, you can alternatively use conda-forge libraries.
+
+1. from Terminal::
+
+    apt install python-pip python-bluez libbluetooth-dev libboost-python-dev libboost-thread-dev libglib2.0-dev bluez bluez-hcidump
+    
+    adduser lp $(whoami)
+
+2. setup Python code::
+
+      /usr/bin/python2.7 -m pip install -e .
+
+3. check that your Bluetooth devices are not blocked (should say "no")::
+
+      rfkill list
+      
+
+Scan for bluetooth devices from Python 
+==========================================
 ::
 
-    apt install libbluetooth-dev bluez bluez-hcidump  libboost-python-dev libboost-thread-dev libglib2.0-dev
+    /usr/bin/python2.7 bluetooth_scan.py
+    
+    
+--------------
 
-    pip install pybluez gattlib
+If no Bluetooth devices found in the PyBluez device scan, try each of the following::
 
-    sudo adduser lp $(whoami)
-    sudo reboot
+    hcitool scan
+    
+and::
 
-Scanning for bluetooth devices from Python 
-==========================================
-using pybluez::
+    bluetoothctl
+    
+    scan on
 
-    python blueztools.py
+If the second way finds devcies but not the first, you may have a chipset issue.
+I have noted this with Marvell hardware on Ubuntu 18.04. 
+I did not look into a resolve for this, as I usually use other hardware.
 
-If you get OSError: No such device  you may not be finding your bluetooth adapter. Try enabling it via::
 
-    sudo hciconfig hci0 up
+------------------------------
 
-one-time pairing
-================
-optional commands commented out, with Bluez 5, we use the bluetoothctl agent::
+If you get error 
 
-    #sudo hciconfig hci0 up   #enables bt on computer
-    #hcitool scan  # gets UUID of devices in pairing mode
-    #hcitool dev # get BT adapter uuid
+    OSError: No such device  
+  
+check that there is a Bluetooth adapter available::
 
-    bluetoothctl -a  #starts interactive prompt
-    scan on          #scans for UUID of device (BT and BLE) in pairing mode
-    pair uuid        # where "uuid" is what you found with scan 
+    hciconfig dev    
+    
+The bluetooth adapter may need to be enabled::
+
+    hciconfig hci0 up
+    
+
+
+Non-Python Bluetooth examples
+=============================
+These example use Bluez directly from Terminal (without Python)
+
+Bluetooth pairing
+-----------------
+using Bluez5 bluetoothctl agent::
+
+    hciconfig hci0 up  # enables bt on computer
+    hcitool scan       # gets UUID of devices in pairing mode
+    hcitool dev        # get BT adapter uuid
+
+    bluetoothctl       # starts interactive prompt
+    scan on            # scans for UUID of device (BT and BLE) in pairing mode
+    pair uuid          # where "uuid" is what you found with scan 
     trust uuid
-    connect uuid    # after pairing, this is how you connect in the future
+    connect uuid       # after pairing, this is how you connect in the future
     
 Notes
 =====
-If you get the message "Creating device failed: org.bluez.Error.AuthenticationRejected: Authentication Rejected", then:: 
+If you get the error
 
-    sudo nano /etc/bin/bluez-simple-agent
-
-and change "KeyboardDisplay" to "DisplayYesNo"
-(thanks to http://www.wolfteck.com/projects/raspi/iphone/)
+  Creating device failed: org.bluez.Error.AuthenticationRejected: Authentication Rejected
+  
+then edit ``/etc/bin/bluez-simple-agent``, 
+`changing <http://www.wolfteck.com/projects/raspi/iphone/>`_
+"KeyboardDisplay" to "DisplayYesNo"
 
 Also try::
 
     bluez-test-device trusted <speaker uuid> yes
 
 
-If connected but lacking sound try::
-
-    nano ~/.asoundrc
-
-paste in::   
+If connected but lacking sound, try editing ``~/.asoundrc``, 
+`pasting in <https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=570468>`_::   
 
     pcm.btspkr {
        type plug
@@ -93,29 +140,34 @@ paste in::
         slave.pcm "btspkr_softvol"
     }
 
-(thanks https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=570468)
 
-to connect 
-==========
-(note, in ubuntu it disconnects after a second, maybe because system
-bluetooth menu is overriding with "off"::
 
-    sudo hcitool cc <uuid>
+Bluetooth connect 
+=================
+::
+
+    hcitool cc <uuid>
+    
+    
+I sometimes saw in Ubuntu that it disconnects after a second, maybe because system bluetooth menu is overriding with "off"?
 
 
 Errors
 =======
-Cannot open shared library /usr/lib/arm-linux-gnueabihf/alsa-lib/libasound_module_pcm_bluetooth.so::
-
-    sudo apt-get install bluez-alsa
 
 
+  Cannot open shared library /usr/lib/arm-linux-gnueabihf/alsa-lib/libasound_module_pcm_bluetooth.so
+  
+::
 
-bt_audio_service_open: connect() failed: Connection refused (111)::
+    apt install bluez-alsa
 
-    sudo nano /etc/bluetooth/audio.conf
+--------
 
-paste in::
+  bt_audio_service_open: connect() failed: Connection refused (111)
+  
+  
+1. edit ``/etc/bluetooth/audio.conf``, pasting in::
 
     [general]
     Enable=Sink,Source,Socket
@@ -124,12 +176,12 @@ paste in::
     AutoConnect=true
     SCORouting=PCM
 
+2. then::
 
-then::
+     service bluetooth restart
+     
 
-     sudo service bluetooth restart
-
-Picking the Bluetooth speaker as default audio device
+Set Bluetooth speaker as default audio device
 =====================================================
 First test it works with::
 

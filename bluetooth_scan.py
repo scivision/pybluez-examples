@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 """
-demo of basic Bluetooth device scanning/discovery
-Michael Hirsch
+Bluetooth device scanning/discovery
 
 http://blog.kevindoran.co/bluetooth-programming-with-python-3/
-https://github.com/karulis/pybluez
+https://github.com/pybluez/pybluez
 """
 import bluetooth as bt
 from bluetooth.ble import DiscoveryService
