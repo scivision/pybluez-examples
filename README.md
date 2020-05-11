@@ -1,53 +1,60 @@
 # PyBlueZ Examples
 
 Example Bluetooth tasks using the Python
-[PyBluez](https://pybluez.github.io/) 
-module. Tested using BlueZ 5 with Python 2.7 and:
+[PyBluez](https://pybluez.github.io/)
+module. Tested using BlueZ 5 on:
 
--   Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter
--   Raspberry Pi 3 (on-board Bluetooth)
--   laptop with Ubuntu 18.04 / 16.04
+* Raspberry Pi 2 with CSR bluetooth 4.0 USB adapter
+* Raspberry Pi 3 / 4 (on-board Bluetooth)
+* laptop with Ubuntu
+* Windows (Bluetooth classic, non-BLE only)
 
 
-## Prereqs
+## Linux
 
-Note that we use system Python 2.7 for ease of library install (even on Ubuntu 18.04). 
+For Ubuntu <= 18.04 we use system Python 2.7 for ease of library install.
 If you have Anaconda/Miniconda, you can alternatively use conda-forge libraries.
 
 1. from Terminal:
+
    ```sh
    apt install python-pip python-bluez libbluetooth-dev libboost-python-dev libboost-thread-dev libglib2.0-dev bluez bluez-hcidump
 
    adduser lp $(whoami)
    ```
 2. setup Python code:
+
    ```sh
-   /usr/bin/python2.7 -m pip install -e .
+   python -m pip install -e .
    ```
 3. check that your Bluetooth devices are not blocked (should say "no"):
+
    ```sh
    rfkill list
    ```
 
 
 ## Scan for bluetooth devices from Python
+
 ```sh
-/usr/bin/python2.7 bluetooth_scan.py
+python bluetooth_scan.py
 ```
 
-If no Bluetooth devices found in the PyBluez device scan, try each of
-the following:
+If no Bluetooth devices found in the PyBluez device scan, try each of the following:
+
 ```sh
 hcitool scan
 ```
+
 and:
+
 ```sh
 bluetoothctl
 
 scan on
 ```
 
-If the second way finds devcies but not the first, you may have a chipset issue. 
+If the second way finds devcies but not the first, you may have a chipset issue.
 I have noted this with Marvell hardware on Ubuntu 18.04.
 I did not look into a resolve for this, as I usually use other hardware.
 
@@ -59,11 +66,15 @@ If you get error
 
 check that there is a Bluetooth adapter available:
 
-    hciconfig dev    
+```sh
+hciconfig dev
+```
 
 The bluetooth adapter may need to be enabled:
 
-    hciconfig hci0 up
+```sh
+hciconfig hci0 up
+```
 
 ## Non-Python Bluetooth examples
 
@@ -72,6 +83,7 @@ These example use Bluez directly from Terminal (without Python)
 ### Bluetooth pairing
 
 using Bluez5 bluetoothctl agent:
+
 ```sh
 hciconfig hci0 up  # enables bt on computer
 hcitool scan       # gets UUID of devices in pairing mode
@@ -79,7 +91,7 @@ hcitool dev        # get BT adapter uuid
 
 bluetoothctl       # starts interactive prompt
 scan on            # scans for UUID of device (BT and BLE) in pairing mode
-pair uuid          # where "uuid" is what you found with scan 
+pair uuid          # where "uuid" is what you found with scan
 trust uuid
 connect uuid       # after pairing, this is how you connect in the future
 ```
@@ -96,11 +108,12 @@ then edit `/etc/bin/bluez-simple-agent`,
 "KeyboardDisplay" to "DisplayYesNo"
 
 Also try:
+
 ```sh
 bluez-test-device trusted <speaker uuid> yes
 ```
 
-If connected but lacking sound, try editing `~/.asoundrc`, 
+If connected but lacking sound, try editing `~/.asoundrc`,
 [pasting in](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=570468):
 
 ```
@@ -111,16 +124,16 @@ pcm.btspkr {
            type bluetooth
            device "AA:BB:CC:DD:EE:FF"
            profile "auto"
-       }   
-   }   
+       }
+   }
    hint {
        show on
        description "BT Speaker"
-   }   
+   }
 }
 ctl.btspkr {
   type bluetooth
-}  
+}
 
 pcm.btspkr_softvol
 {
@@ -130,7 +143,7 @@ pcm.btspkr_softvol
    control.card 0
 }
 
-# Using bluetooth as default : 
+# Using bluetooth as default :
 pcm.!default {
     type plug
     slave.pcm "btspkr_softvol"
@@ -151,13 +164,16 @@ because system bluetooth menu is overriding with "off"?
 > Cannot open shared library
 > /usr/lib/arm-linux-gnueabihf/alsa-lib/libasound_module_pcm_bluetooth.so
 
-    apt install bluez-alsa
+```sh
+apt install bluez-alsa
+```
 
 ---
 
 > bt_audio_service_open: connect() failed: Connection refused (111)
 
 1. edit `/etc/bluetooth/audio.conf`, pasting in:
+
    ```ini
    [general]
    Enable=Sink,Source,Socket
@@ -167,25 +183,33 @@ because system bluetooth menu is overriding with "off"?
    SCORouting=PCM
    ```
 2. then:
+
    ```sh
    service bluetooth restart
    ```
-   
+
 ## Set Bluetooth speaker as default audio device
 
 First test it works with:
+
 ```sh
 mpg321 -a bluetooth  myfile.mp3
 ```
+
 or:
+
 ```sh
 mplayer -ao alsa:device=bluetooth myfile.mp3
 ```
+
 Then, list your audio ALSA devices with:
+
 ```sh
 aplay -L
 ```
+
 and you can use:
+
 ```sh
 alsamixer
 ```
