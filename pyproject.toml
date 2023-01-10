@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">=3.7"
+dependencies = ["pybluez"]
+
+[tool.black]
+line-length = 100
+
+[tool.mypy]
+files = ["."]
+
+ignore_missing_imports = true
+strict_optional = false
+show_column_numbers = true
